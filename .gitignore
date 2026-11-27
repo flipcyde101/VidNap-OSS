@@ -1,0 +1,36 @@
+# VidNap downloads and managed tools
+downloads/
+tools/
+
+# Sensitive local authentication files
+cookies.txt
+*.cookies.txt
+download-request.json
+install-request.json
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+
+# Local desktop configuration and private runtime state
+vidnap-installation.json
+desktop-launch.json
+desktop-inventory.json
+desktop-runtime.template.json
+desktop-instance.json
+preview-config.json
+preview-address.json
+*.vnjs
+*.jsonl
+
+# Temporary and build-intermediate files
+*.log
+*.tmp
+bin/
+obj/
+.vs/
+dist/
+local-verification/
+READY TO SEND/
+VidNap-main/

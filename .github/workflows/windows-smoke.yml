@@ -1,0 +1,46 @@
+name: Windows smoke test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build launcher from current source
+        shell: powershell
+        run: .\Build-Launcher.ps1
+
+      - name: Regression suites (isolated, no media downloads)
+        shell: powershell
+        run: .\tests\Run-Tests.ps1
+
+      - name: Parse PowerShell sources
+        shell: powershell
+        run: |
+          $files = '.\VidNap.ps1', '.\Setup-VidNap.ps1', '.\Build-Launcher.ps1'
+          foreach ($file in $files) {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              (Resolve-Path $file),
+              [ref]$tokens,
+              [ref]$errors
+            ) | Out-Null
+            if ($errors.Count) {
+              throw "$file failed to parse: $($errors[0].Message)"
+            }
+          }
+
+      - name: Initialize WPF interface
+        shell: powershell
+        run: |
+          $env:VIDNAP_SMOKE_TEST = '1'
+          powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -STA -File .\VidNap.ps1

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <meta name="theme-color" content="#f5f6f8">
+ <meta name="apple-mobile-web-app-capable" content="yes">
+ <meta name="apple-mobile-web-app-status-bar-style" content="default">
+ <meta name="apple-mobile-web-app-title" content="VidNap">
+ <title>VidNap</title>
+ <link rel="manifest" href="/manifest.webmanifest">
+ <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+ <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+ <link rel="stylesheet" href="/styles.css">
+ <script type="module" src="/app.mjs"></script>
+</head>
+<body>
+ <a class="skip-link" href="#main">Skip to content</a>
+ <div id="workspace" class="workspace mode-compact">
+  <header class="topbar"><span class="brand">VidNap</span><span class="build-label">Local development preview</span><span id="connection" class="connection" role="status">Connecting to your PC</span></header>
+  <nav class="navigation" aria-label="VidNap">
+   <button type="button" data-view="downloads" aria-current="page">Downloads <span id="nav-count" class="count" hidden></span></button>
+   <button type="button" data-view="history">History</button>
+   <button type="button" data-view="transcripts">Transcripts</button>
+   <button type="button" data-view="settings">Settings</button>
+  </nav>
+  <main id="main" tabindex="-1">
+   <div id="notice" class="notice" role="alert" hidden><div><strong id="notice-title"></strong><p id="notice-body"></p></div><button type="button" id="notice-close" class="quiet">Dismiss message</button></div>
+   <section id="downloads-view" class="view" aria-labelledby="download-heading">
+    <div class="page-heading"><div><h1 id="download-heading">Download media</h1><p>One link or a whole queue. Keep the best available quality.</p></div><button id="start-all" type="button" class="primary" disabled>Download all</button></div>
+    <div class="download-layout">
+     <section class="composer" aria-label="Add media links">
+      <form id="link-form">
+       <div class="link-entry"><label for="links" class="visually-hidden">Media URLs, one per line</label><textarea id="links" rows="1" placeholder="Paste a video or audio link" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="link-help"></textarea><button type="submit" id="analyze" class="primary" data-tooltip="Read the source's real formats and captions before downloading. Nothing is downloaded yet.">Analyze links</button></div>
+       <p id="link-help" class="help">For multiple items, paste one link per line. Control or Command + Enter to analyze.</p>
+       <fieldset id="new-link-options" class="options"><legend>Options for new links</legend>
+        <label>Media<select id="default-media" aria-label="Media for new links"><option value="video">Video</option><option value="audio">Audio only</option></select></label>
+        <div class="option-readonly"><span>Quality</span><output>Best available</output><small>Choose exact streams after analysis.</small></div>
+        <label>Container<select id="default-format" aria-label="Container for new links"></select></label>
+       </fieldset>
+       <details class="advanced"><summary>Advanced options</summary><div class="advanced-body"><label class="check"><input type="checkbox" id="browser-consent" aria-describedby="consent-help">Use browser sign-in</label><label>Browser<select id="browser" aria-label="Browser"><option value="edge">Microsoft Edge</option><option value="chrome">Google Chrome</option><option value="firefox">Firefox</option></select></label><p id="consent-help" class="help">Off by default. Choosing a browser does not give consent. Only check this when you want this operation to use that browser's local sign-in.</p></div></details>
+      </form>
+     </section>
+     <section class="queue-region" aria-labelledby="queue-heading">
+      <div class="section-heading"><h2 id="queue-heading">Your downloads</h2><span id="queue-summary" class="secondary">Up to two at once</span></div>
+      <div id="empty-state" class="empty-state"><svg viewBox="0 0 32 32" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M16 4v16m-6-6 6 6 6-6M6 22v5h20v-5" stroke-linecap="round" stroke-linejoin="round"/></svg><h3>Make it yours to keep.</h3><p>Paste a link above to see its available quality, audio and captions.</p><p class="help">Only download content you own or are authorized to save.</p></div>
+      <ul id="jobs" class="job-list" aria-label="Download queue"></ul>
+      <section id="operations-region" aria-labelledby="operations-heading" hidden><h2 id="operations-heading">Transcript activity</h2><ul id="operations" class="job-list"></ul></section>
+     </section>
+     <aside id="inspector" class="inspector" aria-labelledby="selected-heading" hidden>
+      <h2 id="selected-heading">Selected item</h2><p id="selected-title" class="selected-title"></p><p id="selected-source" class="help"></p>
+      <form id="item-options"><label>Media<select id="item-media" aria-label="Media for selected item"><option value="video">Video</option><option value="audio">Audio only</option></select></label><label>Container<select id="item-format" aria-label="Container for selected item"></select></label><label>Source quality<select id="item-quality" aria-label="Source quality for selected item"></select></label><p id="quality-help" class="help"></p><button type="submit" id="apply-options" class="secondary-button">Apply options</button></form>
+      <div id="caption-options" class="caption-options" hidden><h3>Source captions</h3><label>Language<select id="caption-language"></select></label><label class="check"><input id="allow-automatic" type="checkbox">Allow source automatic captions</label><button type="button" id="get-captions" class="secondary-button">Get captions</button><p class="help">Manual, source-automatic and locally generated text are labeled separately.</p></div>
+      <p id="selected-status" class="help"></p>
+     </aside>
+    </div>
+   </section>
+   <section id="history-view" class="view" aria-labelledby="history-heading" hidden><div class="page-heading"><div><h1 id="history-heading">History</h1><p>Saved files and past results. Source links are not stored in terminal history.</p></div></div><p id="history-empty" class="empty-message">Your finished downloads will appear here.</p><ul id="history-list" class="history-list"></ul></section>
+   <section id="transcripts-view" class="view" aria-labelledby="transcripts-heading" hidden>
+    <div class="page-heading"><div><h1 id="transcripts-heading">Transcripts</h1><p>Read, search and save the words. Keep their origin clear.</p></div></div>
+    <div class="transcript-layout"><section class="transcript-tools" aria-label="Transcript source">
+     <label>Saved media<select id="transcript-media"><option value="">Choose a verified download</option></select></label><button id="generate" type="button" class="primary" disabled>Generate locally</button><p id="generation-help" class="help"></p><p class="help">Generation runs on this PC. Review automated text for accuracy. Add the source link in Downloads to fetch existing captions.</p>
+     <label>Saved transcript<select id="transcript-select"><option value="">Choose a transcript</option></select></label><p id="provenance" class="provenance"></p>
+     <div class="export-actions"><button type="button" data-export="txt" disabled>TXT</button><button type="button" data-export="srt" disabled>SRT</button><button type="button" data-export="vtt" disabled>VTT</button></div><p id="export-result" class="help"></p>
+     <video id="media-player" controls preload="metadata" hidden></video><p id="player-help" class="help" hidden>Playback depends on browser support for the saved original format.</p>
+    </section><section class="reader" aria-label="Transcript reader"><label for="transcript-search" class="visually-hidden">Search transcript</label><input id="transcript-search" type="search" placeholder="Search transcript" disabled><p id="reader-empty" class="empty-message">Choose a saved transcript, or generate one from verified media.</p><ol id="cues" class="cues"></ol><p id="cue-count" class="help" aria-live="polite"></p><button type="button" id="more-cues" class="quiet" hidden>Show 200 more cues</button></section></div>
+   </section>
+   <section id="settings-view" class="view" aria-labelledby="settings-heading" hidden>
+    <div class="page-heading"><div><h1 id="settings-heading">Settings</h1><p>This is an isolated local review build. Your installed app is unchanged.</p></div></div>
+    <p id="setting-offline" class="help">Checking whether this browser can prepare the offline interface.</p>
+    <dl class="settings-list"><div><dt>Downloads</dt><dd id="setting-media">Waiting for D: backend</dd></div><div><dt>State and error logs</dt><dd id="setting-data">Waiting for D: backend</dd></div><div><dt>Simultaneous work</dt><dd>Up to two engine jobs. Each has its own cancel control.</dd></div><div><dt>Media quality</dt><dd>Automatic keeps the engine's best available source streams. Compatible MP4 selects H.264/AAC when available. Lossy audio conversion cannot improve the original source.</dd></div><div><dt>Browser privacy</dt><dd>Sign-in is off unless you explicitly check the box for the operation. Consent is not restored after restart.</dd></div><div><dt>Local transcription</dt><dd id="setting-transcription">Checking local prerequisites</dd></div><div><dt>iPhone home-screen app</dt><dd>The matching mobile layout and install metadata are prepared. Real phone connectivity, HTTPS/pairing and device testing are not configured in this loopback-only preview. After an approved secure connection, open it in Safari and use Share, Add to Home Screen.</dd></div><div><dt>Offline</dt><dd>Only the interface is cached. Private media, queue responses, transcript text and source URLs are never saved in the offline cache. Downloads and generation require the PC worker.</dd></div></dl>
+   </section>
+  </main>
+  <footer class="footer"><span id="storage-label">D: storage required</span><span id="footer-activity">No work starts automatically</span></footer>
+ </div>
+ <div id="tooltip" role="tooltip" class="tooltip" hidden></div>
+ <div id="live-status" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
+ <noscript>VidNap needs JavaScript to communicate with its local PC worker.</noscript>
+</body>
+</html>
